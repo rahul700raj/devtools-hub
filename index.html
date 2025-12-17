@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTools Hub - Complete Developer Environment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "⚡";
+            font-size: 32px;
+            -webkit-text-fill-color: #667eea;
+        }
+
+        .user-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .credits {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .auth-buttons button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .login-btn {
+            background: transparent;
+            border: 2px solid #667eea !important;
+            color: #667eea;
+        }
+
+        .signup-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .auth-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar {
+            width: 100%;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar::after {
+            content: "🔍";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 25px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .tool-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .tool-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .tool-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .tool-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tool-price {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .tool-rating {
+            color: #ffa500;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            line-height: 20px;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .switch-auth a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .switch-auth a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .user-section {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">DevTools Hub</div>
+            <div class="user-section">
+                <div class="credits" id="creditsDisplay">💰 Credits: 1000</div>
+                <div class="auth-buttons" id="authButtons">
+                    <button class="login-btn" onclick="openModal('login')">Login</button>
+                    <button class="signup-btn" onclick="openModal('signup')">Sign Up</button>
+                </div>
+                <button class="signup-btn" id="logoutBtn" style="display: none;" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search for tools, languages, frameworks..." onkeyup="searchTools()">
+        </div>
+
+        <div class="categories">
+            <button class="category-btn active" onclick="filterCategory('all')">All Tools</button>
+            <button class="category-btn" onclick="filterCategory('programming')">Programming</button>
+            <button class="category-btn" onclick="filterCategory('security')">Security</button>
+            <button class="category-btn" onclick="filterCategory('database')">Database</button>
+            <button class="category-btn" onclick="filterCategory('devops')">DevOps</button>
+            <button class="category-btn" onclick="filterCategory('web')">Web Dev</button>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid"></div>
+
+        <footer>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Developer Tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Downloads</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+            </div>
+            <p style="color: #666; margin-top: 20px;">© 2025 DevTools Hub. Your Complete Development Environment.</p>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('login')">&times;</span>
+            <h2>Welcome Back!</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <div class="switch-auth">
+                Don't have an account? <a href="#" onclick="switchModal('login', 'signup')">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('signup')">&times;</span>
+            <h2>Create Account</h2>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Create a strong password">
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <div class="switch-auth">
+                Already have an account? <a href="#" onclick="switchModal('signup', 'login')">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tools = [
+            // Programming Languages
+            { name: "Python 3.12", icon: "🐍", description: "Latest Python interpreter with pip, virtual environments, and extensive library support", category: "programming", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Node.js 20", icon: "🟢", description: "JavaScript runtime with npm, modern ES features, and async capabilities", category: "programming", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Java JDK 21", icon: "☕", description: "Complete Java Development Kit with compiler, JVM, and development tools", category: "programming", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Go 1.21", icon: "🔷", description: "Google's Go language compiler and tools for efficient concurrent programming", category: "programming", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Rust 1.75", icon: "🦀", description: "Systems programming language with memory safety and zero-cost abstractions", category: "programming", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Ruby 3.3", icon: "💎", description: "Dynamic programming language with Rails framework support", category: "programming", price: "Free", rating: "⭐⭐⭐⭐" },
+            
+            // Security Tools
+            { name: "Nmap", icon: "🔍", description: "Network scanner for security auditing and network discovery", category: "security", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Metasploit", icon: "🛡️", description: "Penetration testing framework with exploit database", category: "security", price: "50 Credits", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Wireshark", icon: "🦈", description: "Network protocol analyzer for packet inspection and analysis", category: "security", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Burp Suite", icon: "🔐", description: "Web application security testing toolkit", category: "security", price: "100 Credits", rating: "⭐⭐⭐⭐⭐" },
+            { name: "John the Ripper", icon: "🔓", description: "Password cracking tool for security testing", category: "security", price: "Free", rating: "⭐⭐⭐⭐" },
+            { name: "Aircrack-ng", icon: "📡", description: "WiFi security auditing tools suite", category: "security", price: "Free", rating: "⭐⭐⭐⭐" },
+            
+            // Databases
+            { name: "PostgreSQL 16", icon: "🐘", description: "Advanced open-source relational database with JSON support", category: "database", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "MongoDB 7", icon: "🍃", description: "NoSQL document database for modern applications", category: "database", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Redis 7", icon: "🔴", description: "In-memory data structure store for caching and messaging", category: "database", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "MySQL 8", icon: "🐬", description: "Popular open-source relational database management system", category: "database", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            
+            // DevOps Tools
+            { name: "Docker", icon: "🐳", description: "Container platform for building and deploying applications", category: "devops", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Kubernetes", icon: "☸️", description: "Container orchestration platform for automated deployment", category: "devops", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Terraform", icon: "🏗️", description: "Infrastructure as code tool for cloud provisioning", category: "devops", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Ansible", icon: "🔧", description: "Automation tool for configuration management", category: "devops", price: "Free", rating: "⭐⭐⭐⭐" },
+            { name: "Jenkins", icon: "👷", description: "Continuous integration and delivery automation server", category: "devops", price: "Free", rating: "⭐⭐⭐⭐" },
+            
+            // Web Development
+            { name: "VS Code", icon: "💻", description: "Powerful code editor with extensions and debugging", category: "web", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Git", icon: "📦", description: "Distributed version control system for code management", category: "web", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Nginx", icon: "🌐", description: "High-performance web server and reverse proxy", category: "web", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+            { name: "Apache", icon: "🪶", description: "Popular open-source HTTP server", category: "web", price: "Free", rating: "⭐⭐⭐⭐" },
+            { name: "Postman", icon: "📮", description: "API development and testing platform", category: "web", price: "Free", rating: "⭐⭐⭐⭐⭐" },
+        ];
+
+        let currentCategory = 'all';
+        let isLoggedIn = false;
+        let userCredits = 1000;
+
+        function renderTools(toolsToRender = tools) {
+            const grid = document.getElementById('toolsGrid');
+            grid.innerHTML = toolsToRender.map(tool => `
+                <div class="tool-card" data-category="${tool.category}">
+                    <div class="tool-icon">${tool.icon}</div>
+                    <div class="tool-name">${tool.name}</div>
+                    <div class="tool-description">${tool.description}</div>
+                    <div class="tool-meta">
+                        <div class="tool-price">${tool.price}</div>
+                        <div class="tool-rating">${tool.rating}</div>
+                    </div>
+                    <button class="download-btn" onclick="downloadTool('${tool.name}', '${tool.price}')">
+                        Download Now
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                renderTools(tools);
+            } else {
+                renderTools(tools.filter(tool => tool.category === category));
+            }
+        }
+
+        function searchTools() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = tools.filter(tool => 
+                tool.name.toLowerCase().includes(query) || 
+                tool.description.toLowerCase().includes(query) ||
+                tool.category.toLowerCase().includes(query)
+            );
+            
+            if (currentCategory !== 'all') {
+                renderTools(filtered.filter(tool => tool.category === currentCategory));
+            } else {
+                renderTools(filtered);
+            }
+        }
+
+        function downloadTool(toolName, price) {
+            if (!isLoggedIn) {
+                alert('Please login to download tools!');
+                openModal('login');
+                return;
+            }
+
+            if (price === 'Free') {
+                alert(`✅ ${toolName} downloaded successfully!\n\nInstallation instructions have been sent to your email.`);
+            } else {
+                const credits = parseInt(price.split(' ')[0]);
+                if (userCredits >= credits) {
+                    userCredits -= credits;
+                    updateCreditsDisplay();
+                    alert(`✅ ${toolName} downloaded successfully!\n\nCredits deducted: ${credits}\nRemaining credits: ${userCredits}`);
+                } else {
+                    alert(`❌ Insufficient credits!\n\nRequired: ${credits}\nYou have: ${userCredits}\n\nPlease purchase more credits.`);
+                }
+            }
+        }
+
+        function openModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'flex';
+        }
+
+        function closeModal(type) {
+            document.getElementById(type + 'Modal').style.display = 'none';
+        }
+
+        function switchModal(from, to) {
+            closeModal(from);
+            openModal(to);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            isLoggedIn = true;
+            closeModal('login');
+            updateUIForLoggedIn();
+            alert('✅ Login successful! Welcome back!');
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            isLoggedIn = true;
+            closeModal('signup');
+            updateUIForLoggedIn();
+            alert('✅ Account created successfully! You received 1000 free credits!');
+        }
+
+        function updateUIForLoggedIn() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('creditsDisplay').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            updateCreditsDisplay();
+        }
+
+        function updateCreditsDisplay() {
+            document.getElementById('creditsDisplay').textContent = `💰 Credits: ${userCredits}`;
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            userCredits = 1000;
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('creditsDisplay').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            alert('Logged out successfully!');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Initialize
+        renderTools();
+    </script>
+</body>
+</html>
